@@ -1,18 +1,26 @@
-.row {
+.gridContainer {
+  margin: 100px;
+  padding: 20px;
   display: flex;
-}
 
-.square {
-  height: 40px;
-  width: 40px;
-  border: 1px solid #ccc;
-  cursor: pointer;
-}
+  .mainInfo {
+    .startBtn {
+      margin-left: 5px;
+    }
 
-.blue {
-  background-color: blue;
-}
+    .cellsContainer {
+      margin-top: 50px;
+    }
 
-.white {
-  background-color: white;
+    .row {
+      display: flex;
+    }
+
+    .square {
+      height: 40px;
+      width: 40px;
+      border: 1px solid #ccc;
+      cursor: pointer;
+    }
+  }
 }
