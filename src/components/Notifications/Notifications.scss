@@ -1,0 +1,14 @@
+.notificationsContainer {
+  display: flex;
+  flex-direction: column;
+
+  .notificationsSection {
+    background-color: bisque;
+    width: fit-content;
+    height: fit-content;
+    padding: 12px;
+    margin-left: 15px;
+    border-radius: 10px;
+    margin-bottom: 5px;
+  }
+}

@@ -1,5 +1,16 @@
-import React, { useState } from 'react';
-import { CellProps, RowProps } from '../../types/types';
+import React, { useEffect, useState } from 'react';
+import { CellProps, RowProps } from './types';
+import { useAppSelector, useAppDispatch } from '../../hooks/hooks';
+
+import { getModes } from './services/squareServices';
+import {
+  addNewNotification,
+  changeMode,
+  resetNotifications,
+  selectModes,
+} from './squareSlice';
+import { Button, Select } from 'antd';
+import Notifications from '../Notifications/Notifications';
 
 import './Square.scss';
 
@@ -11,11 +22,20 @@ const Cell: React.FC<CellProps> = ({
 }) => {
   const [colorTrigger, setColorTrigger] = useState(false);
 
+  const dispatch = useAppDispatch();
+  const square = useAppSelector(selectModes);
+
   const handleCellHover = () => {
     setHoveredCell({ row, col });
     console.log({ row, col });
     setColorTrigger(!colorTrigger);
+    dispatch(addNewNotification({ row, col }));
   };
+
+  useEffect(() => {
+    setColorTrigger(false);
+    console.log(square.mode);
+  }, [square.mode]);
 
   return (
     <div
@@ -56,7 +76,9 @@ const Row: React.FC<RowProps> = ({
 };
 
 const Square: React.FC = () => {
-  const [gridSize, setGridSize] = useState<number>(3);
+  const [gridSize, setGridSize] = useState<number>(0);
+  const [modeOption, setMode] = useState<number>(0);
+
   const initialColor = 'white';
 
   const [hoveredCell, setHoveredCell] = useState<{
@@ -64,11 +86,18 @@ const Square: React.FC = () => {
     col: number;
   } | null>(null);
 
-  const handleGridSizeChange = (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    const newSize = parseInt(event.target.value, 10);
-    setGridSize(newSize);
+  const dispatch = useAppDispatch();
+  const square = useAppSelector(selectModes);
+
+  const handleGridSizeChange = () => {
+    setGridSize(modeOption);
+    dispatch(resetNotifications());
+    dispatch(changeMode(modeOption));
+  };
+
+  const handleMode = (value: string) => {
+    const newSize = parseInt(value, 10);
+    setMode(newSize);
   };
 
   const renderRows = () => {
@@ -89,16 +118,36 @@ const Square: React.FC = () => {
     return rows;
   };
 
+  useEffect(() => {
+    dispatch(getModes());
+  }, []);
+
   return (
-    <div>
-      <label htmlFor='gridSizeSelect'>Select Grid Size: </label>
-      <select id='gridSizeSelect' onChange={handleGridSizeChange}>
-        <option value='3'>3x3</option>
-        <option value='5'>5x5</option>
-        <option value='10'>10x10</option>
-      </select>
-      <div>{renderRows()}</div>
-    </div>
+    <section className='gridContainer'>
+      <section className='mainInfo'>
+        <Select
+          placeholder='Pick Mode'
+          style={{ width: 220 }}
+          loading={square.loading}
+          onChange={handleMode}
+          options={square.modes.map((item) => ({
+            value: item.field,
+            label: item.name,
+          }))}
+          size='large'
+        />
+        <Button
+          type='primary'
+          className='startBtn'
+          size='large'
+          onClick={handleGridSizeChange}
+        >
+          START
+        </Button>
+        <div className='cellsContainer'>{renderRows()}</div>
+      </section>
+      <Notifications notifications={square.notifications} />
+    </section>
   );
 };
 
