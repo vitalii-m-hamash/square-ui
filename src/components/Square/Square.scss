@@ -1,0 +1,18 @@
+.row {
+  display: flex;
+}
+
+.square {
+  height: 40px;
+  width: 40px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+}
+
+.blue {
+  background-color: blue;
+}
+
+.white {
+  background-color: white;
+}
